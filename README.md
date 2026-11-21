@@ -1,9 +1,10 @@
 <p align="center">
-  <img src="assets/banner.svg" alt="Occam-Kit — Scientific, Token-Frugal Universal Agent Harness" width="100%" />
+  <img src="assets/banner.png" alt="Occam-Kit — Scientific, Token-Frugal Universal Agent Harness" width="100%" />
 </p>
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-white?style=flat-square" alt="MIT License" /></a>
+  <a href="https://github.com/Moeraafatz/occam-kit/releases"><img src="https://img.shields.io/badge/release-v1.1.0-30D158?style=flat-square" alt="Release v1.1.0" /></a>
   <img src="https://img.shields.io/badge/dependencies-0%20(Python%203.9%2B%20stdlib)-30D158?style=flat-square" alt="Zero Dependencies" />
   <img src="https://img.shields.io/badge/standard-agentskills.io%20%2B%20AGENTS.md-09090B?style=flat-square" alt="Agent Skills Open Standard" />
   <img src="https://img.shields.io/badge/startup%20tax-262%20tokens%20total-FF9F0A?style=flat-square" alt="262 Tokens Startup Tax" />
@@ -11,16 +12,57 @@
 
 # occam-kit
 
-**Occam's Razor for AI coding agents.**
+**Occam's Razor for AI coding agents — free, MIT open source, zero dependencies.**
 
-`occam-kit` is an open-source, zero-dependency agent harness and portable skill pack for **Claude Code, OpenAI Codex CLI, Cursor, Gemini CLI, Antigravity, and GitHub Copilot**.
-
-It makes coding agents think with scientific rigor **while using the smallest context and cheapest capable model tier possible**:
+`occam-kit` is a portable agent harness and skill pack for **Claude Code, OpenAI Codex CLI, Cursor, Gemini CLI, Antigravity, and GitHub Copilot**. It helps coding agents build projects with scientific rigor **while using the smallest context window and cheapest capable model tier possible**:
 
 1. **Brainstorm & Analyze First** — Asks 3–5 surgical questions, exposes contradictions in requirements, cuts unnecessary scope, and locks a compact 1-page spec before writing code.
 2. **Verify From Primary Sources** — Enforces an explicit source-tier hierarchy (`T1` official docs / source code / peer-reviewed papers / local benchmarks) via a machine-checked evidence ledger (`cite_check.py`).
 3. **Route to Minimum Capability** — Offloads mechanical work to **Tier 0 zero-token Python scripts**, routes routine work to small/fast models (`T1`), standard work to mid-tier (`T2`), and gates frontier models (`T3`) strictly for architecture tradeoffs, security audits, or bugs after 2 logged dead ends.
 4. **Stop Context Poisoning** — Replaces raw repo dumps, noisy 300-test logs, and sprawling chat histories with symbol maps, error-only test reducers, and `<350`-token handoff ledgers.
+
+---
+
+## Reproducible Token Benchmarks (`-93.9%` Combined)
+
+<p align="center">
+  <img src="assets/benchmark-chart.png" alt="Occam-Kit Reproducible Token Reduction Benchmark Chart" width="100%" />
+</p>
+
+Run `python3 benchmarks/run_benchmarks.py` locally (<1 second, $0 API cost) to verify every number below (full report in [`benchmarks/results.md`](benchmarks/results.md)):
+
+| Scenario | Tier 0 Tool | Raw Context | With `occam-kit` | Saved | Integrity Check |
+| :--- | :--- | ---: | ---: | ---: | :--- |
+| Codebase Discovery (24 files, 4 languages) | `occam.py map` | 9,065 tok | 950 tok | **-89.5%** | All 24/24 files mapped |
+| Verbose Passing Test Suite (300 tests) | `occam.py run` | 7,633 tok | 54 tok | **-99.3%** | Exit status + `300 passed` preserved |
+| Verbose Failing Test Suite (298 pass / 2 fail) | `occam.py run` | 7,845 tok | 547 tok | **-93.0%** | 100% of failing tests + errors preserved |
+| 15-Turn Session Resume vs. Ledger Handoff | `occam.py ledger handoff` | 4,293 tok | 150 tok | **-96.5%** | Goal, decisions, dead ends, next tier kept |
+| Skill Startup Context Tax (Progressive Disclosure) | `occam.py audit` | 3,090 tok | 262 tok | **-91.5%** | All 4 skills pass `agentskills.io` spec |
+| **Combined Across All 5 Scenarios** | **All Tier 0** | **31,926 tok** | **1,963 tok** | **-93.9%** | **Zero diagnostic evidence lost** |
+
+> **Transparency note:** Counts use a deterministic offline BPE heuristic (`ceil(chars / 4)`) so anyone can reproduce exact results with zero API keys. Full raw command logs are always preserved on disk at `.occam/last_run.log`.
+
+---
+
+## Live CLI Preview
+
+<p align="center">
+  <img src="assets/terminal-demo.png" alt="Occam-Kit Live CLI Terminal Preview" width="100%" />
+</p>
+
+---
+
+## Five-Phase Scientific Engineering Loop
+
+<p align="center">
+  <img src="assets/workflow-overview.png" alt="Occam-Kit Five-Phase Scientific Engineering Loop" width="100%" />
+</p>
+
+## Minimum-Capability Routing Ladder
+
+<p align="center">
+  <img src="assets/routing-ladder.png" alt="Occam-Kit Minimum-Capability Routing Ladder" width="100%" />
+</p>
 
 ---
 
@@ -34,26 +76,9 @@ It makes coding agents think with scientific rigor **while using the smallest co
 
 ---
 
-## Reproducible Benchmarks (Zero API Keys)
-
-Run `python3 benchmarks/run_benchmarks.py` locally (<1 second) to verify every number below (full details in [`benchmarks/results.md`](benchmarks/results.md)):
-
-| Scenario | Tier 0 Tool | Raw Context | With `occam-kit` | Saved | Integrity Check |
-| :--- | :--- | ---: | ---: | ---: | :--- |
-| Codebase Discovery (24 files, 4 languages) | `occam.py map` | 9,065 tok | 950 tok | **-89.5%** | All 24/24 files mapped |
-| Verbose Passing Test Suite (300 tests) | `occam.py run` | 7,633 tok | 54 tok | **-99.3%** | Exit status + `300 passed` preserved |
-| Verbose Failing Test Suite (298 pass / 2 fail) | `occam.py run` | 7,845 tok | 547 tok | **-93.0%** | 100% of failing tests + errors preserved |
-| 15-Turn Session Resume vs. Ledger Handoff | `occam.py ledger handoff` | 4,293 tok | 150 tok | **-96.5%** | Goal, decisions, dead ends, next tier kept |
-| Skill Startup Context Tax (Progressive Disclosure) | `occam.py audit` | 3,090 tok | 262 tok | **-91.5%** | All 4 skills pass `agentskills.io` spec |
-| **Combined Across All 5 Scenarios** | **All Tier 0** | **31,926 tok** | **1,963 tok** | **-93.9%** | **Zero diagnostic evidence lost** |
-
-> **Transparency note:** Counts use a deterministic offline BPE heuristic (`ceil(chars / 4)`) so anyone can verify results at $0 cost. Full raw command logs are always preserved on disk at `.occam/last_run.log`.
-
----
-
 ## 30-Second Install
 
-### Option A — One-line install into your current project (all supported agents)
+### Option A — One-line install (auto-detects project vs. `~` global scope)
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Moeraafatz/occam-kit/main/install.sh | bash -s -- --target all
 ```
@@ -66,7 +91,7 @@ cd occam-kit
 # Project install for specific agents
 ./install.sh --target claude,codex,cursor --scope project --dir /path/to/your-project
 
-# Global user install (~/.claude/skills, ~/.agents/skills, ~/.gemini/skills, ~/.occam/scripts)
+# Global user install (~/.claude/skills, ~/.agents/skills, ~/.gemini/skills, ~/.gemini/antigravity/skills)
 ./install.sh --target all --scope global
 
 # Preview without modifying files
@@ -87,22 +112,6 @@ cd occam-kit
 | **Antigravity** | `SKILL.md` (`agentskills.io`) | `.agents/skills/occam-*` | `~/.gemini/antigravity/skills/occam-*` |
 | **GitHub Copilot** | Copilot instructions adapter | `.github/copilot-instructions.md` | — |
 | **Tier 0 Scripts** | Zero-dep Python 3.9+ CLI | `.occam/scripts/*.py` | `~/.occam/scripts/*.py` |
-
----
-
-## How the Five-Phase Protocol Works
-
-```mermaid
-flowchart LR
-    P1["1. Brainstorm<br/>3–5 questions + contradiction audit<br/>(.occam/decision-spec.md)"]
-    P2["2. Research Gate<br/>T1 primary sources only<br/>(occam cite --strict)"]
-    P3["3. Map & Route<br/>Symbol skeleton + tier tags<br/>(T0 → T1 → T2 → T3)"]
-    P4["4. Execute & Trim<br/>Minimal diffs + error-only logs<br/>(occam run -- pytest)"]
-    P5["5. Checkpoint<br/>Dead-end memory + <350-tok resume<br/>(occam ledger handoff)"]
-
-    P1 --> P2 --> P3 --> P4 --> P5
-    P5 -. "Fresh context / cheaper model" .-> P3
-```
 
 ---
 
@@ -128,10 +137,10 @@ python3 scripts/occam.py ledger handoff --stats
 # 4. Enforce primary-source citations before locking architecture
 python3 scripts/occam.py cite .occam/research.md --strict
 
-# 5. Audit SKILL.md compliance & startup discovery context tax
+# 5. Audit SKILL.md compliance & startup discovery context tax (supports YAML lists & --prefix filter)
 python3 scripts/occam.py audit skills --max-startup-tokens 350
 
-# 6. Full workspace health check
+# 6. Full workspace health check (separates occam-* health from third-party skill context tax)
 python3 scripts/occam.py doctor
 ```
 
@@ -162,7 +171,9 @@ python3 scripts/occam.py doctor
 occam-kit/
 ├── AGENTS.md                       # Universal lean operating rules (~430 tokens)
 ├── CLAUDE.md                       # Claude Code entry shim
+├── CONTRIBUTING.md                 # Open-source contribution guide & CI rules
 ├── install.sh                      # Cross-agent installer (--target, --scope, --dry-run, --uninstall)
+├── assets/                         # Dark-mode SVG + Retina 2x PNG charts, diagrams & CLI preview
 ├── skills/                         # Official agentskills.io portable skills (262 tokens combined startup)
 │   ├── occam-harness/              # Master 5-phase orchestrator + scientific foundations reference
 │   ├── occam-brainstorm/           # Socratic questioner + contradiction analyzer + 1-page spec template
@@ -172,21 +183,19 @@ occam-kit/
 │   ├── cursor/rules/               # Modular .mdc rules (1 tiny alwaysApply + 3 agent-requested)
 │   └── copilot/                    # GitHub Copilot instructions adapter
 ├── scripts/                        # Tier 0 stdlib Python CLI (occam, repo_map, trim_run, ledger, cite_check, token_budget)
-├── benchmarks/                     # Reproducible offline benchmark suite + verified results.md
-├── tests/                          # unittest suite (scripts, SKILL.md compliance, installer E2E)
+├── benchmarks/                     # Reproducible offline benchmark suite + results.md + SVG chart generator
+├── tests/                          # unittest suite (11 tests: scripts, YAML parser, installer E2E)
 └── .github/workflows/ci.yml        # Automated CI across Python 3.9 and 3.12
 ```
 
 ---
 
-## Development & Verification
+## Open Source & Contributing
+
+`occam-kit` is **100% free and open source under the [MIT License](LICENSE)** — fork it, customize it, bundle it into teams, or contribute new language extractors and adapters. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ```bash
 python3 scripts/occam.py audit skills --max-startup-tokens 350
 python3 -m unittest discover -s tests -v
-python3 benchmarks/run_benchmarks.py
+python3 benchmarks/run_benchmarks.py --write
 ```
-
-## License
-
-MIT — free for personal and commercial use. See [LICENSE](LICENSE).

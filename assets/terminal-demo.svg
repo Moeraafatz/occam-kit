@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 540" width="1200" height="540" role="img" aria-label="Occam-Kit Live Terminal Output Preview">
+  <defs>
+    <linearGradient id="termBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0D0E12"/>
+      <stop offset="100%" stop-color="#09090B"/>
+    </linearGradient>
+  </defs>
+
+  <!-- macOS Terminal Window -->
+  <rect width="1200" height="540" rx="18" fill="url(#termBg)"/>
+  <rect x="1" y="1" width="1198" height="538" rx="17" fill="none" stroke="#27272A" stroke-width="2"/>
+
+  <!-- Title Bar -->
+  <path d="M 18 1 H 1182 Q 1199 1 1199 18 V 44 H 1 V 18 Q 1 1 18 1 Z" fill="#16171D"/>
+  <line x1="1" y1="44" x2="1199" y2="44" stroke="#27272A" stroke-width="1"/>
+  <circle cx="28" cy="23" r="6.5" fill="#FF453A"/>
+  <circle cx="50" cy="23" r="6.5" fill="#FF9F0A"/>
+  <circle cx="72" cy="23" r="6.5" fill="#30D158"/>
+  <text x="600" y="28" text-anchor="middle" fill="#A1A1AA" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" font-weight="600">zsh — occam-kit live CLI preview (Python 3.9+ stdlib · 0 LLM tokens)</text>
+
+  <!-- Terminal Body -->
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, monospace" font-size="14">
+    <!-- Command 1: doctor -->
+    <text x="34" y="80" fill="#30D158" font-weight="700">$</text>
+    <text x="54" y="80" fill="#FFFFFF" font-weight="600">python3 ~/.occam/scripts/occam.py doctor --root ~</text>
+    <text x="34" y="106" fill="#A1A1AA">Occam-Kit Doctor</text>
+    <text x="34" y="126" fill="#52525B">--------------------------------------------------------------------------------</text>
+    <text x="34" y="148" fill="#D4D4D8">Python:   3.9.6 (requires &gt;= 3.9)   ·   Git: /usr/bin/git</text>
+    <text x="34" y="170" fill="#30D158">Skills:   [PASS] ~/.gemini/antigravity/skills (occam=262 tok)</text>
+    <text x="34" y="192" fill="#30D158">Skills:   [PASS] ~/.claude/skills (occam=262 tok <tspan fill="#FF9F0A">| folder total: 30 skills = 2,064 tok WARN: high context tax)</tspan></text>
+    <text x="34" y="214" fill="#30D158">Skills:   [PASS] ~/.agents/skills (occam=262 tok <tspan fill="#FF9F0A">| folder total: 60 skills = 4,074 tok WARN: high context tax)</tspan></text>
+
+    <!-- Command 2: map -->
+    <text x="34" y="256" fill="#30D158" font-weight="700">$</text>
+    <text x="54" y="256" fill="#FFFFFF" font-weight="600">python3 scripts/occam.py map --root . --max-tokens 1800 --stats</text>
+    <text x="34" y="282" fill="#D4D4D8">- `scripts/repo_map.py` (418L)  →  extract_python_symbols, extract_markdown_headings, generate_repo_map</text>
+    <text x="34" y="304" fill="#D4D4D8">- `scripts/trim_run.py` (274L)  →  strip_ansi, reduce_log, main</text>
+    <text x="34" y="326" fill="#D4D4D8">- `scripts/ledger.py`   (327L)  →  load_state, render_markdown, build_handoff, cmd_deadend</text>
+    <text x="34" y="348" fill="#30D158" font-weight="700">[occam map] scanned=22 files | raw=31,580 tok → map=1,426 tok (saved 30,154 tok / 95.5%)</text>
+
+    <!-- Command 3: run -->
+    <text x="34" y="390" fill="#30D158" font-weight="700">$</text>
+    <text x="54" y="390" fill="#FFFFFF" font-weight="600">python3 scripts/occam.py run -- pytest -vv</text>
+    <text x="34" y="416" fill="#FF453A" font-weight="700">[occam run] FAIL (exit=1 | 4.18s | raw=322 lines)</text>
+    <text x="34" y="438" fill="#FCA5A5">  L311: FAILED tests/test_pipeline_3.py::test_case_142_validation - AssertionError</text>
+    <text x="34" y="460" fill="#FCA5A5">  L312: FAILED tests/test_pipeline_4.py::test_case_267_validation - ValueError</text>
+    <text x="34" y="482" fill="#A1A1AA">Summary: 2 failed, 298 passed in 4.18s  ·  Full raw log saved: .occam/last_run.log</text>
+    <text x="34" y="506" fill="#30D158" font-weight="700">Tokens: 7,845 → 547 (saved 7,298 tok / 93.0% — 100% of errors preserved)</text>
+  </g>
+</svg>

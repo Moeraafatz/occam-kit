@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 340" width="1200" height="340" role="img" aria-label="Occam-Kit Five-Phase Scientific Workflow">
+  <defs>
+    <linearGradient id="bgFlow" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#09090B"/>
+      <stop offset="100%" stop-color="#111318"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="340" rx="20" fill="url(#bgFlow)"/>
+  <rect x="1" y="1" width="1198" height="338" rx="19" fill="none" stroke="#27272A" stroke-width="2"/>
+
+  <text x="48" y="50" fill="#FFFFFF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="24" font-weight="800">Five-Phase Scientific Engineering Loop</text>
+  <text x="48" y="76" fill="#A1A1AA" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="14">Externalized artifacts eliminate context drift and stop agents from repeating dead ends across sessions.</text>
+
+  <!-- 5 Phase Boxes -->
+  <!-- 1 -->
+  <g transform="translate(48, 106)">
+    <rect width="204" height="176" rx="12" fill="#141417" stroke="#30D158" stroke-width="1.3"/>
+    <text x="16" y="28" fill="#30D158" font-family="ui-monospace, monospace" font-size="12" font-weight="700">01 · BRAINSTORM</text>
+    <text x="16" y="54" fill="#FFFFFF" font-family="-apple-system, sans-serif" font-size="16" font-weight="700">Socratic Audit</text>
+    <text x="16" y="80" fill="#A1A1AA" font-family="-apple-system, sans-serif" font-size="12.5">• 3–5 surgical questions</text>
+    <text x="16" y="100" fill="#A1A1AA" font-family="-apple-system, sans-serif" font-size="12.5">• Expose contradictions</text>
+    <text x="16" y="120" fill="#A1A1AA" font-family="-apple-system, sans-serif" font-size="12.5">• Cut v1 scope bloat</text>
+    <rect x="14" y="138" width="176" height="24" rx="6" fill="#09090B" stroke="#27272A"/>
+    <text x="102" y="154" text-anchor="middle" fill="#86EFAC" font-family="ui-monospace, monospace" font-size="11">.occam/decision-spec.md</text>
+  </g>
+  <text x="260" y="200" fill="#52525B" font-family="ui-monospace, monospace" font-size="20" font-weight="700">→</text>
+
+  <!-- 2 -->
+  <g transform="translate(278, 106)">
+    <rect width="204" height="176" rx="12" fill="#141417" stroke="#30D158" stroke-width="1.3"/>
+    <text x="16" y="28" fill="#30D158" font-family="ui-monospace, monospace" font-size="12" font-weight="700">02 · VERIFY</text>
+    <text x="16" y="54" fill="#FFFFFF" font-family="-apple-system, sans-serif" font-size="16" font-weight="700">Research Gate</text>
+    <text x="16" y="80" fill="#A1A1AA" font-family="-apple-system, sans-serif" font-size="12.5">• T1 primary sources</text>
+    <text x="16" y="100" fill="#A1A1AA" font-family="-apple-system, sans-serif" font-size="12.5">• Exact versions &amp; dates</text>
+    <text x="16" y="120" fill="#A1A1AA" font-family="-apple-system, sans-serif" font-size="12.5">• Reject T3-only proof</text>
+    <rect x="14" y="138" width="176" height="24" rx="6" fill="#09090B" stroke="#27272A"/>
+    <text x="102" y="154" text-anchor="middle" fill="#86EFAC" font-family="ui-monospace, monospace" font-size="11">.occam/research.md</text>
+  </g>
+  <text x="490" y="200" fill="#52525B" font-family="ui-monospace, monospace" font-size="20" font-weight="700">→</text>
+
+  <!-- 3 -->
+  <g transform="translate(508, 106)">
+    <rect width="204" height="176" rx="12" fill="#141417" stroke="#FF9F0A" stroke-width="1.3"/>
+    <text x="16" y="28" fill="#FF9F0A" font-family="ui-monospace, monospace" font-size="12" font-weight="700">03 · ROUTE</text>
+    <text x="16" y="54" fill="#FFFFFF" font-family="-apple-system, sans-serif" font-size="16" font-weight="700">Map &amp; Tier</text>
+    <text x="16" y="80" fill="#A1A1AA" font-family="-apple-system, sans-serif" font-size="12.5">• AST/regex repo map</text>
+    <text x="16" y="100" fill="#A1A1AA" font-family="-apple-system, sans-serif" font-size="12.5">• Tag steps T0/T1/T2/T3</text>
+    <text x="16" y="120" fill="#A1A1AA" font-family="-apple-system, sans-serif" font-size="12.5">• Read exact line ranges</text>
+    <rect x="14" y="138" width="176" height="24" rx="6" fill="#09090B" stroke="#27272A"/>
+    <text x="102" y="154" text-anchor="middle" fill="#FCD34D" font-family="ui-monospace, monospace" font-size="11">occam.py map --stats</text>
+  </g>
+  <text x="720" y="200" fill="#52525B" font-family="ui-monospace, monospace" font-size="20" font-weight="700">→</text>
+
+  <!-- 4 -->
+  <g transform="translate(738, 106)">
+    <rect width="204" height="176" rx="12" fill="#141417" stroke="#FFFFFF" stroke-width="1.1" stroke-opacity="0.5"/>
+    <text x="16" y="28" fill="#FFFFFF" font-family="ui-monospace, monospace" font-size="12" font-weight="700">04 · EXECUTE</text>
+    <text x="16" y="54" fill="#FFFFFF" font-family="-apple-system, sans-serif" font-size="16" font-weight="700">Build &amp; Trim</text>
+    <text x="16" y="80" fill="#A1A1AA" font-family="-apple-system, sans-serif" font-size="12.5">• Minimal surgical diffs</text>
+    <text x="16" y="100" fill="#A1A1AA" font-family="-apple-system, sans-serif" font-size="12.5">• Error-only test logs</text>
+    <text x="16" y="120" fill="#A1A1AA" font-family="-apple-system, sans-serif" font-size="12.5">• Log failed dead ends</text>
+    <rect x="14" y="138" width="176" height="24" rx="6" fill="#09090B" stroke="#27272A"/>
+    <text x="102" y="154" text-anchor="middle" fill="#D4D4D8" font-family="ui-monospace, monospace" font-size="11">.occam/last_run.log</text>
+  </g>
+  <text x="950" y="200" fill="#52525B" font-family="ui-monospace, monospace" font-size="20" font-weight="700">→</text>
+
+  <!-- 5 -->
+  <g transform="translate(968, 106)">
+    <rect width="184" height="176" rx="12" fill="#102116" stroke="#30D158" stroke-width="1.5"/>
+    <text x="16" y="28" fill="#30D158" font-family="ui-monospace, monospace" font-size="12" font-weight="700">05 · COMPACT</text>
+    <text x="16" y="54" fill="#FFFFFF" font-family="-apple-system, sans-serif" font-size="16" font-weight="700">State Handoff</text>
+    <text x="16" y="80" fill="#A1A1AA" font-family="-apple-system, sans-serif" font-size="12.5">• &lt;350-token brief</text>
+    <text x="16" y="100" fill="#A1A1AA" font-family="-apple-system, sans-serif" font-size="12.5">• Fresh context reset</text>
+    <text x="16" y="120" fill="#A1A1AA" font-family="-apple-system, sans-serif" font-size="12.5">• Drop to T1/T2 tier</text>
+    <rect x="14" y="138" width="156" height="24" rx="6" fill="#09090B" stroke="#30D158"/>
+    <text x="92" y="154" text-anchor="middle" fill="#30D158" font-family="ui-monospace, monospace" font-size="11">.occam/state.md</text>
+  </g>
+
+  <!-- Bottom return loop arrow -->
+  <path d="M 1060 284 V 310 H 610 V 288" fill="none" stroke="#30D158" stroke-width="1.5" stroke-dasharray="5,5"/>
+  <polygon points="610,283 605,292 615,292" fill="#30D158"/>
+  <text x="835" y="326" text-anchor="middle" fill="#86EFAC" font-family="ui-monospace, monospace" font-size="12">Resume next milestone cleanly in fresh context or lower model tier</text>
+</svg>

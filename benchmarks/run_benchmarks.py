@@ -385,13 +385,106 @@ def render_markdown(report: Dict[str, object]) -> str:
     return "\n".join(lines) + "\n"
 
 
+def render_svg_chart(report: Dict[str, object]) -> str:
+    """Render a clean dark-mode SVG horizontal comparison chart from real results."""
+    scenarios = report["scenarios"]
+    max_val = max(int(s["raw_tokens"]) for s in scenarios) if scenarios else 1
+    bar_x = 340
+    bar_max_w = 620
+    row_h = 84
+    top_y = 138
+    height = top_y + len(scenarios) * row_h + 110
+
+    short_labels = [
+        ("Codebase Discovery", "24 files · 4 languages (occam map)"),
+        ("Passing Test Suite", "300 verbose tests (occam run)"),
+        ("Failing Test Suite", "298 pass / 2 fail · 100% errors kept"),
+        ("15-Turn Session Resume", "Full chat vs. ledger handoff"),
+        ("Skill Startup Tax", "4 skills · progressive disclosure"),
+    ]
+
+    rows_svg: List[str] = []
+    for idx, s in enumerate(scenarios):
+        y = top_y + idx * row_h
+        title, subtitle = short_labels[idx] if idx < len(short_labels) else (str(s["name"]), str(s["tool"]))
+        raw_tok = int(s["raw_tokens"])
+        occ_tok = int(s["occam_tokens"])
+        pct = float(s["reduction_pct"])
+
+        raw_w = max(8, int(round(raw_tok / max_val * bar_max_w)))
+        occ_w = max(8, int(round(occ_tok / max_val * bar_max_w)))
+
+        rows_svg.append(
+            f'''  <g transform="translate(0, {y})">
+    <text x="52" y="20" fill="#FFFFFF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="16" font-weight="700">{title}</text>
+    <text x="52" y="40" fill="#A1A1AA" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">{subtitle}</text>
+
+    <!-- Raw Context Bar -->
+    <rect x="{bar_x}" y="4" width="{bar_max_w}" height="18" rx="5" fill="#18181B"/>
+    <rect x="{bar_x}" y="4" width="{raw_w}" height="18" rx="5" fill="#FF453A" opacity="0.88"/>
+    <text x="{bar_x + raw_w + 10}" y="18" fill="#FCA5A5" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" font-weight="600">{raw_tok:,} tok</text>
+
+    <!-- Occam-Kit Bar -->
+    <rect x="{bar_x}" y="28" width="{bar_max_w}" height="18" rx="5" fill="#18181B"/>
+    <rect x="{bar_x}" y="28" width="{occ_w}" height="18" rx="5" fill="#30D158"/>
+    <text x="{bar_x + occ_w + 10}" y="42" fill="#86EFAC" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" font-weight="700">{occ_tok:,} tok</text>
+
+    <!-- Savings Pill -->
+    <rect x="1062" y="10" width="94" height="32" rx="16" fill="#14291C" stroke="#30D158" stroke-width="1.2"/>
+    <text x="1109" y="31" text-anchor="middle" fill="#30D158" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" font-weight="800">-{pct:.1f}%</text>
+    <line x1="52" y1="66" x2="1156" y2="66" stroke="#27272A" stroke-width="1"/>
+  </g>'''
+        )
+
+    footer_y = top_y + len(scenarios) * row_h + 22
+    total_raw = int(report["total_raw_tokens"])
+    total_occ = int(report["total_occam_tokens"])
+    overall_pct = float(report["overall_reduction_pct"])
+
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 {height}" width="1200" height="{height}" role="img" aria-label="Occam-Kit Reproducible Token Benchmark Chart">
+  <defs>
+    <linearGradient id="bgChart" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#09090B"/>
+      <stop offset="100%" stop-color="#111318"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="{height}" rx="20" fill="url(#bgChart)"/>
+  <rect x="1" y="1" width="1198" height="{height - 2}" rx="19" fill="none" stroke="#27272A" stroke-width="2"/>
+
+  <!-- Header -->
+  <text x="52" y="56" fill="#FFFFFF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="28" font-weight="800">Reproducible Token Reduction Benchmarks</text>
+  <text x="52" y="84" fill="#A1A1AA" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13">Run locally (&lt;1s, $0 API cost): python3 benchmarks/run_benchmarks.py</text>
+
+  <!-- Combined Badge -->
+  <rect x="936" y="32" width="220" height="54" rx="14" fill="#14291C" stroke="#30D158" stroke-width="1.5"/>
+  <text x="1046" y="55" text-anchor="middle" fill="#30D158" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="22" font-weight="800">-{overall_pct:.1f}% TOKENS</text>
+  <text x="1046" y="75" text-anchor="middle" fill="#D4D4D8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">{total_raw:,} → {total_occ:,} combined</text>
+
+  <!-- Legend -->
+  <rect x="52" y="102" width="14" height="10" rx="3" fill="#FF453A" opacity="0.88"/>
+  <text x="74" y="111" fill="#D4D4D8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="13">Raw Context (Baseline)</text>
+  <rect x="242" y="102" width="14" height="10" rx="3" fill="#30D158"/>
+  <text x="264" y="111" fill="#D4D4D8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="13">With Occam-Kit Tier 0</text>
+  <line x1="52" y1="124" x2="1156" y2="124" stroke="#27272A" stroke-width="1.5"/>
+
+{chr(10).join(rows_svg)}
+
+  <!-- Footer summary -->
+  <rect x="52" y="{footer_y}" width="1104" height="56" rx="12" fill="#141417" stroke="#27272A" stroke-width="1.2"/>
+  <circle cx="78" cy="{footer_y + 28}" r="6" fill="#30D158"/>
+  <text x="96" y="{footer_y + 33}" fill="#FFFFFF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="15" font-weight="600">Zero diagnostic evidence lost:</text>
+  <text x="322" y="{footer_y + 33}" fill="#A1A1AA" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="14">100% of failing tests, error lines, locked decisions &amp; dead ends preserved; full raw logs saved to .occam/last_run.log.</text>
+</svg>
+'''
+
+
 def main(argv: Optional[List[str]] = None) -> int:
     parser = argparse.ArgumentParser(description="Run reproducible Occam-Kit token benchmarks.")
     parser.add_argument("--json", action="store_true", help="Output JSON.")
     parser.add_argument(
         "--write",
         action="store_true",
-        help="Write Markdown results to benchmarks/results.md.",
+        help="Write Markdown results to benchmarks/results.md and SVG chart to assets/benchmark-chart.svg.",
     )
     args = parser.parse_args(argv)
 
@@ -400,7 +493,10 @@ def main(argv: Optional[List[str]] = None) -> int:
     if args.write:
         out_path = REPO_ROOT / "benchmarks" / "results.md"
         out_path.write_text(md, encoding="utf-8")
-        print(f"Wrote {out_path}")
+        chart_path = REPO_ROOT / "assets" / "benchmark-chart.svg"
+        chart_path.parent.mkdir(parents=True, exist_ok=True)
+        chart_path.write_text(render_svg_chart(report), encoding="utf-8")
+        print(f"Wrote {out_path} and {chart_path}")
 
     if args.json:
         print(json.dumps(report, indent=2))
