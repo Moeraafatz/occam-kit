@@ -45,7 +45,7 @@ def parse_frontmatter(markdown_text: str) -> Tuple[Optional[Dict[str, object]], 
     body = "\n".join(lines[end_idx + 1 :]).lstrip("\n")
 
     data: Dict[str, object] = {}
-    current_map_key: Optional[str] = None
+    current_container_key: Optional[str] = None
     current_multiline_key: Optional[str] = None
     multiline_buf: List[str] = []
 
@@ -68,16 +68,30 @@ def parse_frontmatter(markdown_text: str) -> Tuple[Optional[Dict[str, object]], 
                 continue
             flush_multiline()
 
-        if current_map_key is not None and (raw_line.startswith("  ") or raw_line.startswith("\t")):
-            stripped = raw_line.strip()
-            if ":" in stripped:
-                sub_k, sub_v = stripped.split(":", 1)
-                sub_dict = data.setdefault(current_map_key, {})
-                if isinstance(sub_dict, dict):
-                    sub_dict[sub_k.strip()] = sub_v.strip().strip('"').strip("'")
-                continue
+        stripped = raw_line.strip()
+        is_indented = raw_line.startswith(" ") or raw_line.startswith("\t")
 
-        current_map_key = None
+        # Handle YAML list items (indented or flush-left under an open key)
+        if current_container_key is not None and stripped.startswith("- "):
+            item = stripped[2:].strip().strip('"').strip("'")
+            existing = data.get(current_container_key)
+            if isinstance(existing, list):
+                existing.append(item)
+            else:
+                data[current_container_key] = [item]
+            continue
+
+        # Handle nested YAML map entries
+        if current_container_key is not None and is_indented and ":" in stripped:
+            sub_k, sub_v = stripped.split(":", 1)
+            existing = data.get(current_container_key)
+            if not isinstance(existing, dict):
+                existing = {}
+                data[current_container_key] = existing
+            existing[sub_k.strip()] = sub_v.strip().strip('"').strip("'")
+            continue
+
+        current_container_key = None
         if ":" not in raw_line:
             errors.append(f"Malformed frontmatter line: {raw_line!r}")
             continue
@@ -90,7 +104,7 @@ def parse_frontmatter(markdown_text: str) -> Tuple[Optional[Dict[str, object]], 
             current_multiline_key = key
             multiline_buf = []
         elif val == "":
-            current_map_key = key
+            current_container_key = key
             data[key] = {}
         else:
             if (val.startswith('"') and val.endswith('"')) or (
@@ -103,8 +117,12 @@ def parse_frontmatter(markdown_text: str) -> Tuple[Optional[Dict[str, object]], 
     return data, body, errors
 
 
-def audit_skills_dir(skills_dir: Path, max_startup_tokens: int = 400) -> Dict[str, object]:
-    """Validate all SKILL.md files under skills_dir and compute startup context tax."""
+def audit_skills_dir(
+    skills_dir: Path,
+    max_startup_tokens: int = 400,
+    prefix: Optional[str] = None,
+) -> Dict[str, object]:
+    """Validate SKILL.md files under skills_dir and compute startup context tax."""
     results: List[Dict[str, object]] = []
     total_startup_tokens = 0
     total_body_tokens = 0
@@ -120,7 +138,13 @@ def audit_skills_dir(skills_dir: Path, max_startup_tokens: int = 400) -> Dict[st
             "max_startup_tokens": max_startup_tokens,
         }
 
-    skill_dirs = sorted(p for p in skills_dir.iterdir() if p.is_dir() and not p.name.startswith("."))
+    skill_dirs = sorted(
+        p
+        for p in skills_dir.iterdir()
+        if p.is_dir()
+        and not p.name.startswith(".")
+        and (prefix is None or p.name.startswith(prefix))
+    )
     if not skill_dirs:
         return {
             "ok": False,
@@ -266,7 +290,11 @@ def cmd_compare(args: argparse.Namespace) -> int:
 
 
 def cmd_audit_skills(args: argparse.Namespace) -> int:
-    report = audit_skills_dir(Path(args.dir), max_startup_tokens=args.max_startup_tokens)
+    report = audit_skills_dir(
+        Path(args.dir),
+        max_startup_tokens=args.max_startup_tokens,
+        prefix=args.prefix,
+    )
     if args.json:
         print(json.dumps(report, indent=2))
     else:
@@ -320,6 +348,11 @@ def build_parser() -> argparse.ArgumentParser:
         type=int,
         default=400,
         help="Maximum allowed combined startup metadata tokens (default: 400).",
+    )
+    p_aud.add_argument(
+        "--prefix",
+        default=None,
+        help="Optional skill folder name prefix filter (e.g., occam-).",
     )
     p_aud.add_argument("--json", action="store_true", help="Output JSON.")
     p_aud.set_defaults(func=cmd_audit_skills)

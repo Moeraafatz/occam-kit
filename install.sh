@@ -8,10 +8,12 @@ set -euo pipefail
 REPO_URL="${OCCAM_KIT_REPO:-https://github.com/Moeraafatz/occam-kit.git}"
 TARGETS="all"
 SCOPE="project"
+SCOPE_EXPLICIT=0
 PROJECT_DIR="$(pwd)"
 DRY_RUN=0
 UNINSTALL=0
 TEMP_CLONE=""
+AGENTS_SKILLS_INSTALLED=0
 
 usage() {
   cat <<'EOF'
@@ -50,6 +52,7 @@ while [ $# -gt 0 ]; do
       ;;
     --scope)
       SCOPE="${2:-}"
+      SCOPE_EXPLICIT=1
       shift 2
       ;;
     --dir)
@@ -99,8 +102,13 @@ fi
 
 if [ "$SCOPE" = "project" ]; then
   BASE_DIR="$(cd "$PROJECT_DIR" && pwd)"
+  RESOLVED_HOME="$(cd "$HOME" && pwd)"
+  if [ "$SCOPE_EXPLICIT" -eq 0 ] && [ "$BASE_DIR" = "$RESOLVED_HOME" ]; then
+    echo "[occam-kit] Detected home directory ($RESOLVED_HOME) — switching to --scope global to keep ~ clean."
+    SCOPE="global"
+  fi
 else
-  BASE_DIR="$HOME"
+  BASE_DIR="$(cd "$HOME" && pwd)"
 fi
 
 run_cmd() {
@@ -186,12 +194,20 @@ fi
 
 install_scripts
 
+install_shared_agents_skills() {
+  if [ "$AGENTS_SKILLS_INSTALLED" -eq 1 ]; then
+    return 0
+  fi
+  install_skills_into "$BASE_DIR/.agents/skills"
+  AGENTS_SKILLS_INSTALLED=1
+}
+
 if should_run_target claude; then
   install_skills_into "$BASE_DIR/.claude/skills"
 fi
 
 if should_run_target codex; then
-  install_skills_into "$BASE_DIR/.agents/skills"
+  install_shared_agents_skills
 fi
 
 if should_run_target cursor; then
@@ -199,10 +215,10 @@ if should_run_target cursor; then
     echo "[occam-kit] Installing Cursor .mdc rules -> $BASE_DIR/.cursor/rules"
     run_cmd mkdir -p "$BASE_DIR/.cursor/rules"
     run_cmd cp "$SRC_ROOT"/adapters/cursor/rules/*.mdc "$BASE_DIR/.cursor/rules/"
-    install_skills_into "$BASE_DIR/.agents/skills"
+    install_shared_agents_skills
   else
     echo "[occam-kit] Cursor global skills -> $BASE_DIR/.agents/skills (use --scope project for .cursor/rules/*.mdc)"
-    install_skills_into "$BASE_DIR/.agents/skills"
+    install_shared_agents_skills
   fi
 fi
 
@@ -214,7 +230,7 @@ if should_run_target antigravity; then
   if [ "$SCOPE" = "global" ]; then
     install_skills_into "$BASE_DIR/.gemini/antigravity/skills"
   else
-    install_skills_into "$BASE_DIR/.agents/skills"
+    install_shared_agents_skills
   fi
 fi
 

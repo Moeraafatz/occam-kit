@@ -43,20 +43,42 @@ def run_doctor(root: Path) -> int:
         root / ".agents" / "skills",
         root / ".claude" / "skills",
         root / ".gemini" / "skills",
+        root / ".gemini" / "antigravity" / "skills",
     ]
     found_skills = [p for p in candidates if p.exists() and any(p.iterdir())]
     overall_ok = True
 
     if found_skills:
         for sdir in found_skills:
-            report = token_budget.audit_skills_dir(sdir)
-            badge = "PASS" if report["ok"] else "FAIL"
-            if not report["ok"]:
-                overall_ok = False
-            print(
-                f"Skills:   [{badge}] {sdir} "
-                f"(startup={report['total_startup_tokens']} tok)"
-            )
+            occam_rep = token_budget.audit_skills_dir(sdir, max_startup_tokens=400, prefix="occam-")
+            full_rep = token_budget.audit_skills_dir(sdir, max_startup_tokens=400)
+            has_occam = len(occam_rep.get("skills", [])) > 0
+            total_count = len(full_rep.get("skills", []))
+            total_tok = int(full_rep.get("total_startup_tokens", 0))
+
+            if has_occam:
+                occam_ok = bool(occam_rep["ok"])
+                occam_tok = int(occam_rep["total_startup_tokens"])
+                badge = "PASS" if occam_ok else "FAIL"
+                if not occam_ok:
+                    overall_ok = False
+                if total_count > len(occam_rep["skills"]):
+                    tax_note = (
+                        f" | folder total: {total_count} skills = {total_tok} tok "
+                        f"({'WARN: high context tax' if total_tok > 400 else 'OK'})"
+                    )
+                else:
+                    tax_note = ""
+                print(
+                    f"Skills:   [{badge}] {sdir} "
+                    f"(occam={occam_tok} tok{tax_note})"
+                )
+            else:
+                badge = "PASS" if full_rep["ok"] else "WARN"
+                print(
+                    f"Skills:   [{badge}] {sdir} "
+                    f"({total_count} skills, startup={total_tok} tok)"
+                )
     else:
         print("Skills:   [INFO] No local skills directory found under repo root.")
 

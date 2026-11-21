@@ -39,6 +39,17 @@ class TestTokenBudgetAndSkills(unittest.TestCase):
             report = token_budget.audit_skills_dir(Path(tmp))
             self.assertFalse(report["ok"])
 
+    def test_yaml_list_frontmatter_parses_cleanly(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            sdir = Path(tmp) / "list-skill"
+            sdir.mkdir()
+            (sdir / "SKILL.md").write_text(
+                '---\nname: list-skill\ndescription: Supports YAML list tools.\nallowed-tools:\n  - "Bash"\n  - "Read"\n---\nBody text\n',
+                encoding="utf-8",
+            )
+            report = token_budget.audit_skills_dir(Path(tmp))
+            self.assertTrue(report["ok"], f"YAML list skill failed audit: {report}")
+
 
 class TestRepoMap(unittest.TestCase):
     def test_extracts_python_and_ts_symbols_under_budget(self) -> None:
@@ -233,6 +244,7 @@ class TestInstallerAndCLI(unittest.TestCase):
                 check=False,
             )
             self.assertEqual(res.returncode, 0, res.stderr)
+            self.assertEqual(res.stdout.count(".agents/skills"), 1, res.stdout)
             self.assertTrue((project / ".claude" / "skills" / "occam-harness" / "SKILL.md").exists())
             self.assertTrue((project / ".agents" / "skills" / "occam-frugal-router" / "SKILL.md").exists())
             self.assertTrue((project / ".cursor" / "rules" / "occam-core.mdc").exists())
@@ -270,6 +282,52 @@ class TestInstallerAndCLI(unittest.TestCase):
             self.assertFalse((project / ".claude" / "skills" / "occam-harness").exists())
             self.assertFalse((project / ".cursor" / "rules" / "occam-core.mdc").exists())
             self.assertFalse((project / ".occam" / "scripts").exists())
+
+    def test_installer_auto_global_in_home_and_doctor_separates_third_party_tax(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            fake_home = Path(tmp)
+            # Pre-populate a heavy third-party skill in fake_home/.agents/skills
+            heavy = fake_home / ".agents" / "skills" / "heavy-third-party"
+            heavy.mkdir(parents=True)
+            (heavy / "SKILL.md").write_text(
+                "---\nname: heavy-third-party\ndescription: " + ("word " * 180) + "\n---\nBody\n",
+                encoding="utf-8",
+            )
+
+            env = dict(**__import__("os").environ)
+            env["HOME"] = str(fake_home)
+            res = subprocess.run(
+                [
+                    "bash",
+                    str(REPO_ROOT / "install.sh"),
+                    "--target",
+                    "all",
+                    "--dir",
+                    str(fake_home),
+                ],
+                env=env,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                check=False,
+            )
+            self.assertEqual(res.returncode, 0, res.stdout + res.stderr)
+            self.assertIn("switching to --scope global", res.stdout)
+            self.assertFalse((fake_home / "AGENTS.md").exists())
+            self.assertFalse((fake_home / ".cursor" / "rules" / "occam-core.mdc").exists())
+            self.assertTrue((fake_home / ".gemini" / "antigravity" / "skills" / "occam-harness" / "SKILL.md").exists())
+
+            doc = subprocess.run(
+                [sys.executable, str(fake_home / ".occam" / "scripts" / "occam.py"), "doctor", "--root", str(fake_home)],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                check=False,
+            )
+            self.assertEqual(doc.returncode, 0, doc.stdout + doc.stderr)
+            self.assertIn("[PASS]", doc.stdout)
+            self.assertIn("WARN: high context tax", doc.stdout)
+            self.assertIn(".gemini/antigravity/skills", doc.stdout)
 
 
 if __name__ == "__main__":
