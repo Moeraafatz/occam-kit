@@ -1,0 +1,14 @@
+---
+description: Activate when scoping a new project, ambiguous feature, or architecture choice that needs structured Socratic brainstorming and user-answer contradiction analysis.
+globs:
+alwaysApply: false
+---
+
+# Occam Brainstorm — Socratic Requirements Analyzer
+1. Ask **3–5 decision-forcing questions in one batch** (core v1 outcome, hard constraints, explicit non-goals, user happy path, failure tolerance), each with a concise recommended default.
+2. **Analyze answers critically** before coding:
+   - Surface contradictions between goals and constraints with 2 concrete options + recommendation.
+   - Expose hidden assumptions (permissions, build tools, runtime limits).
+   - Cut scope adding >30% complexity for <10% value.
+3. Lock a compact **<400-word `.occam/decision-spec.md`** and initialize `.occam/state.md` via `occam.py ledger init`.
+4. Confirm spec with the user once, then proceed to verified research or implementation.

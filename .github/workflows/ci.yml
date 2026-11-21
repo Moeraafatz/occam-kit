@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Audit agentskills.io compliance & startup token tax
+        run: python3 scripts/occam.py audit skills --max-startup-tokens 350
+
+      - name: Run unit and installer integration tests
+        run: python3 -m unittest discover -s tests -v
+
+      - name: Run reproducible offline benchmarks
+        run: python3 benchmarks/run_benchmarks.py

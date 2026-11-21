@@ -1,0 +1,14 @@
+---
+description: Activate when choosing libraries, APIs, algorithms, benchmarks, or scientific claims that must be verified from primary sources before implementation.
+globs:
+alwaysApply: false
+---
+
+# Occam Research Gate — Primary Sources Only
+1. Research only load-bearing claims (5–8 max) where being wrong causes costly rework.
+2. Enforce source hierarchy:
+   - **T1 (Primary):** Official versioned docs, source code, RFCs, peer-reviewed papers (DOI/arXiv), reproducible local benchmarks.
+   - **T2 (Corroborating):** Reproducible engineering benchmarks, maintainer PRs/issues with code.
+   - **T3 (Secondary):** Blogs, forums, model memory — NEVER sole proof for a `Verified` claim.
+3. Log claims in `.occam/research.md` (`| Claim | Tier | Source | Version/Date | Status |`) and run `occam.py cite .occam/research.md --strict`.
+4. Never fabricate citations or API signatures; mark unconfirmed items `Provisional` explicitly.

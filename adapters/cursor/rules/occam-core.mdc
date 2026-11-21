@@ -1,0 +1,12 @@
+---
+description: Core Occam-Kit token discipline, Tier 0 script usage, and anti-context-poisoning rules.
+globs:
+alwaysApply: true
+---
+
+# Occam-Kit Core Discipline
+1. **Map before reading:** Run `python3 .occam/scripts/occam.py map --max-tokens 1800` (or `scripts/occam.py`) instead of scanning whole files. Read only exact needed line ranges.
+2. **Compress command logs:** Wrap tests/builds in `python3 .occam/scripts/occam.py run -- <cmd>` so passing noise never floods context.
+3. **Clarify & verify first:** On ambiguous tasks, ask 3–5 decision-forcing questions and flag contradictions before coding. Verify load-bearing APIs/claims against primary sources (official docs, source code, papers).
+4. **Log dead ends & checkpoints:** Record failed fixes via `occam.py ledger deadend` so they are never retried. Resume long threads from `occam.py ledger handoff`.
+5. **Minimum-capability mindset:** Offload mechanical work to local scripts (`T0`), use fast/small models (`T1`) for discovery/boilerplate, standard (`T2`) for implementation, and frontier (`T3`) only for architecture tradeoffs or bugs after 2 logged dead ends.

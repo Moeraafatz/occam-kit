@@ -1,0 +1,15 @@
+---
+description: Activate when breaking down multi-step plans, optimizing token cost, or deciding which model tier to use per task.
+globs:
+alwaysApply: false
+---
+
+# Occam Frugal Router — Minimum Viable Intelligence
+Tag every plan step with its lowest sufficient tier:
+- **T0 (0 tokens):** Local deterministic scripts (`occam.py map/run/ledger/cite`, `rg`, linters, formatters).
+- **T1 (Small/Fast):** File search, boilerplate, mechanical renames, doc updates, simple test scaffolds.
+- **T2 (Standard):** Implementing locked specs, multi-file edits, scoped bug fixes.
+- **T3 (Frontier):** ONLY initial architecture tradeoffs, security audits, or root-cause bugs after 2 logged `ledger deadend` failures.
+
+After locking a spec or resolving a hard bug on a frontier model, emit:
+`[OCCAM ROUTE] Safe to drop to T1/T2 model. Resume via: python3 .occam/scripts/occam.py ledger handoff`
